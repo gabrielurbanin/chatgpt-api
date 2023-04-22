@@ -17,10 +17,13 @@ type Message struct {
 }
 
 func NewMessage(role, content string, model *Model) (*Message, error) {
+	totalTokens := tiktoken_go.CountTokens(model.GetModelName(), content)
+
 	msg := &Message{
 		Id:        uuid.New().String(),
 		Role:      role,
 		Content:   content,
+		Tokens:    totalTokens,
 		Model:     model,
 		CreatedAt: time.Now(),
 	}
@@ -46,4 +49,8 @@ func (m *Message) Validate() error {
 	}
 
 	return nil
+}
+
+func (m *Message) GetTokensUsed() int {
+	return m.Tokens
 }
